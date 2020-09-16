@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="/webjars/bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet" />
+	<script type= "text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+	<script type= "text/javascript" src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script type= "text/javascript" src="../static/js/etudiant.js" th:src="@{/js/etudiant.js}"></script>
+	
+	<meta charset="ISO-8859-1">
+	<title>Etudiants</title>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+	    <div class="container">
+	        <a class="navbar-brand" href="/">Gestion des notes</a>
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+	                aria-expanded="false" aria-label="Toggle navigation">
+	            <span class="navbar-toggler-icon"></span>
+	        </button>
+	        <div class="collapse navbar-collapse" id="navbarResponsive">
+	            <ul class="navbar-nav ml-auto">
+	                <li class="nav-item active">
+	                    <a class="nav-link" href="/">Accueil
+	                        <span class="sr-only">(current)</span>
+	                    </a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="/etudiants">Etudiants</a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="/filieres">Filieres</a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="notes">Notes</a>
+	                </li>
+	            </ul>
+	        </div>
+	    </div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<h1>Liste des etudiants</h1>
+				<div class="row">
+					<div class="col-4 text-left">
+						<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">Ajouter</button>
+					</div>
+					<div class="col text-right">
+						<select id="filiereChoisi" th:onchange="'filterList(this);'" class="mb-2 text-right" name="filiereChoisi">
+				            <option> Trier par filiere </option>
+				            <option th:each= "filiere : ${filieres}"
+				                     th:value= "${filiere.id}"
+				                     th:text= "${filiere.libelle}">
+				             </option>
+			             </select>  
+					</div>
+				</div>
+				
+				<table class="table table-bordered table-stripped">
+					<thead>
+						<tr>
+							<td>id</td>
+							<td>Nom</td>
+							<td>Prenom</td>
+							<td>Sexe</td>
+							<td>Date de naissance</td>
+							<td>Filiere</td>
+							<td>Actions</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each = "etudiant:${etudiants}">
+							<td th:text = "${etudiant.id}">id</td>
+							<td th:text = "${etudiant.nom}">nom</td>
+							<td th:text = "${etudiant.prenom}">prenom</td>
+							<td th:text = "${etudiant.sexe}">sexe</td>
+							<td th:text = "${etudiant.dateNaissance}">date de naissance</td>
+							<td th:text = "${etudiant.filiere.libelle}">filiere</td>
+							<td>
+								<a  class="btn btn-warning" id= "editButton" th:href="@{/etudiants/getOne(id=${etudiant.id})}">Modifier </a>
+								<a class="btn btn-danger" id= "deleteButton" th:href="@{/etudiants/delete(id=${etudiant.id})}">Supprimer</a>
+							</td>
+						</tr>
+					</tbody>
+				
+				</table>
+			</div>
+		</div>
+	</div>
+
+	
+	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	 <form th:action=@{/etudiants/addNew} method="post">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">New student</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	     
+	          <div class="form-group">
+	            <label for="recipient-name" class="col-form-label">nom:</label>
+	            <input type="text" class="form-control"  name="nom" required>
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="recipient-name" class="col-form-label">prenom:</label>
+	            <input type="text" class="form-control"  name="prenom" required>
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="recipient-name" class="col-form-label">sexe:</label>
+	            <select  class="form-control" id= "sexeid"  name="sexe" required>
+	            <option> -SELECT- </option>
+	            <option > Feminin </option>
+	            <option> Masculin </option>
+	             </select>  
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="recipient-name" class="col-form-label">date de naissance:</label>
+	            <input type="date" class="form-control"  name="dateNaissance" required>
+	          </div>
+	          <div class="form-group">
+	            <label for="filiereEdit" class="col-form-label">filiere:</label>
+	            <select  class="form-control" id= "filiereEdit"  name="filiereid" required>
+	            <option> -SELECT </option>
+	            <option th:each= "filiere : ${filieres}"
+	                     th:value= "${filiere.id}"
+	                     th:text= "${filiere.libelle}">
+	             </option>
+	             </select>  
+	            
+	          </div> 
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+	        <button type="submit" class="btn btn-primary">Enregistrer</button>
+	      </div>
+	    </div>
+	  </div>
+	  </form>
+	</div>
+	
+	
+	<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	 <form th:action=@{/etudiants/update} method="put">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Nouveau</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      
+	      	  <div class="form-group">
+	            <label for="idEdit" class="col-form-label">Id:</label>
+	            <input type="text" class="form-control" id = "idEdit" name="id" readonly>
+	          </div>
+	     
+	          <div class="form-group">
+	            <label for="nameEdit" class="col-form-label">nom:</label>
+	            <input type="text" class="form-control" id = "nameEdit" name="nom">
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="prenomEdit" class="col-form-label">prenom:</label>
+	            <input type="text" class="form-control" id = "prenomEdit" name="prenom" >
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="sexeEdit" class="col-form-label">sexe:</label>
+	            <input type="text" class="form-control" id = "sexeEdit"  name="sexe">
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="dateNaissEdit" class="col-form-label">date de naissance:</label>
+	            <input type="text" class="form-control" id = "dateNaissEdit" name="dateNaissance">
+	          </div>
+	          <div class="form-group">
+	            <label for="filiereEdit" class="col-form-label">filiere:</label>
+	            <select  class="form-control" id= "filiereEdit"  name="filiereid">
+	            <option> -SELECT- </option>
+	            <option th:each= "filiere : ${filieres}"
+	                     th:value= "${filiere.id}"
+	                     th:text= "${filiere.libelle}">
+	             </option>
+	             </select>  
+	            
+	          </div> 
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        <button type="submit" class="btn btn-primary">save</button>
+	      </div>
+	    </div>
+	  </div>
+	  </form>
+	</div>
+	
+	<div class="modal" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Voulez vous vraiment supprimer?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a href = "" class="btn btn-primary">Supprimer</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+  	<script>  	
+  		function filterList(val) {
+			alert(val.value);
+		}
+  		
+	  	$(document).ready(function () {
+	  		
+	  		/*
+	  		 $("#filiereChoisi").on('change', function(){
+	 	        theme: "bootstrap4",
+	 	        ajax: {
+	 	            url: '/states',
+	 	            dataType: 'json',
+	 	            delay: 250,
+	 	            processResults: function (response) {
+	 	                return {
+	 	                    results: response
+	 	                };
+	 	            },
+	 	            cache: true
+	 	        }
+	 	    });
+	  		 */
+	  	});	  			   
+	</script>
+</body>
+</html>

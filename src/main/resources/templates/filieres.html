@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="/webjars/bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet" />
+	<script type= "text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+	<script type= "text/javascript" src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<meta charset="ISO-8859-1">
+	<title>Filières</title>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+	    <div class="container">
+	        <a class="navbar-brand" href="/">Gestion des notes</a>
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+	                aria-expanded="false" aria-label="Toggle navigation">
+	            <span class="navbar-toggler-icon"></span>
+	        </button>
+	        <div class="collapse navbar-collapse" id="navbarResponsive">
+	            <ul class="navbar-nav ml-auto">
+	                <li class="nav-item active">
+	                    <a class="nav-link" href="/">Accueil
+	                        <span class="sr-only">(current)</span>
+	                    </a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="/etudiants">Etudiants</a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="/filieres">Filieres</a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="notes">Notes</a>
+	                </li>
+	            </ul>
+	        </div>
+	    </div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<h1 class="title">Liste des filieres</h1>
+				<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">Ajouter</button>
+				<table  class="table table-bordered table-stripped">
+					<thead>
+						<tr>
+							<td>id</td>
+							<td>libelle</td>
+							<td>Modifier</td>
+							<td>Supprimer</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each = "filiere:${filieres}">
+							<td th:text = "${filiere.id}">id</td>
+							<td th:text = "${filiere.libelle}">libelle</td>
+							<td><button type="button" class="btn btn-warning">Modifier</button></td>
+							<td><button type="button" class="btn btn-danger">Supprimer</button></td>
+						</tr>
+					</tbody>
+			
+				</table>
+			</div>
+		</div>
+	</div>
+
+
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <form th:action=@{/filieres/addNew} method="post">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Nouvelle fileres</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">libelle:</label>
+            <input type="text" class="form-control"  name="libelle">
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button type="submit" class="btn btn-primary">Enregister</button>
+      </div>
+    </div>
+  </div>
+  </form>
+</div>
+
+</body>
+</html>

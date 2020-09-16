@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="/webjars/bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet" />
+<script type= "text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type= "text/javascript" src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+	    <div class="container">
+	        <a class="navbar-brand" href="/">Gestion des notes</a>
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+	                aria-expanded="false" aria-label="Toggle navigation">
+	            <span class="navbar-toggler-icon"></span>
+	        </button>
+	        <div class="collapse navbar-collapse" id="navbarResponsive">
+	            <ul class="navbar-nav ml-auto">
+	                <li class="nav-item active">
+	                    <a class="nav-link" href="/">Accueil
+	                        <span class="sr-only">(current)</span>
+	                    </a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="/etudiants">Etudiants</a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="/filieres">Filieres</a>
+	                </li>
+	                <li class="nav-item">
+	                    <a class="nav-link" href="notes">Notes</a>
+	                </li>
+	            </ul>
+	        </div>
+	    </div>
+	</nav>
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<h1>Liste des etudiants</h1>
+				<div class="row">
+					<div class="col text-left">
+						<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">Ajouter</button>
+					</div>
+				</div>
+				
+				<table class="table table-bordered table-stripped">
+					<thead>
+						<tr>
+							<td>id</td>
+							<td>Nom</td>
+							<td>Date Evaluation</td>
+							<td>Action</td>
+						
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each = "note:${notes}">
+							<td th:text = "${note.id}">id</td>
+							<td th:text = "${note.etudiant.nom}">nom</td>
+							<td th:text = "${note.evaluation.dateEvaluaion}">prenom</td>
+							
+							<td>
+							<a  class="btn btn-warning" id= "editButton" >Modifier </a>
+							<a class="btn btn-danger" id= "deleteButton" >Supprimer</a>
+							</td>
+						
+						
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+			
+	<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<form th:action=@{/etudiants/addNew} method="post">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">New note</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		           <div class="form-group">
+		            <label for="filiereEdit" class="col-form-label">filiere:</label>
+		            
+		            <select  class="form-control" th:onchange="'ajaxGet(this);'" id= "filiereEdit"  name="filiereid" required>
+				            <option> -SELECT </option>
+				            <option th:each= "filiere : ${filieres}"
+				                     th:value= "${filiere.id}"
+				                     th:text= "${filiere.libelle}">
+				             </option>
+			             </select> 
+					
+		            
+		          </div> 
+		          		          
+		          <div class="form-group">
+		            <label for="filiereEdit" class="col-form-label">Evalation:</label>
+		            <select  class="form-control" id= "evalEdit" name="evaluationid" required>
+			            <option> -SELECT </option>
+			            <option th:each= "evaluation : ${evaluations}"
+			                     th:value= "${evaluation.id}"
+			                     th:text= "${evalation.matiere.libelle}">
+			             </option>
+		             </select>  
+		            
+		          </div> 
+		          
+		          <div id="listeNotes" >
+		              <fieldset>
+		                 <legend>Liste des etudiants avec les notes</legend>
+		                     <table class="table table-condensed table-striped">
+		                          <thead>
+		                               <tr>                                           
+		                                 <th>Nom</th>
+		                                           
+		                                 <th>Notes</th>
+		                                </tr>
+		                           </thead>          
+		                           <tbody id="listEtudAndNote">
+		                                <!--    
+		                             	<tr th:each = "etudiant:${filiere.etudiants}">
+		                                 	 <td th:text = "${etudiant.nom}"></td>                                                                                           
+		                                                
+		                                     <input type="text" class="form-control" id = "idEdit" name="id" disabled>
+		                                                    
+		                                     <input type="text" class="form-control" id = "noteEdit" name="note" required>
+		                                                                                               
+		                                 </tr>
+		                                 -->
+		
+		                           </tbody>
+		                       </table>
+		
+		               </fieldset>
+		          </div>
+		          
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary">save</button>
+		      </div>
+		    </div>
+		  </div>
+		  </form>
+	</div>
+	
+	
+	<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	 <form th:action=@{/etudiants/update} method="put">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Nouveau</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      
+	      	  <div class="form-group">
+	            <label for="idEdit" class="col-form-label">Id:</label>
+	            <input type="text" class="form-control" id = "idEdit" name="id" readonly>
+	          </div>
+	     
+	          <div class="form-group">
+	            <label for="nameEdit" class="col-form-label">nom:</label>
+	            <input type="text" class="form-control" id = "nameEdit" name="nom">
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="prenomEdit" class="col-form-label">prenom:</label>
+	            <input type="text" class="form-control" id = "prenomEdit" name="prenom" >
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="sexeEdit" class="col-form-label">sexe:</label>
+	            <input type="text" class="form-control" id = "sexeEdit"  name="sexe">
+	          </div>
+	          
+	          <div class="form-group">
+	            <label for="dateNaissEdit" class="col-form-label">date de naissance:</label>
+	            <input type="text" class="form-control" id = "dateNaissEdit" name="dateNaissance">
+	          </div>
+	          <div class="form-group">
+	            <label for="filiereEdit" class="col-form-label">filiere:</label>
+	            <select  class="form-control" id= "filiereEdit"  name="filiereid">
+	            <option> -SELECT- </option>
+	            <option th:each= "filiere : ${filieres}"
+	                     th:value= "${filiere.id}"
+	                     th:text= "${filiere.libelle}">
+	             </option>
+	             </select>  
+	            
+	          </div> 
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        <button type="submit" class="btn btn-primary">save</button>
+	      </div>
+	    </div>
+	  </div>
+	  </form>
+	</div>
+	
+	<div class="modal" id="deleteModal" tabindex="-1">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title">Confirmation</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	        <p>Voulez vous vraiment supprimer?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        <a href = "" class="btn btn-primary">Supprimer</a>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+  	<script>  	
+  		function afficherEtudiants(val) {
+  			debugger;
+			alert(val.value);
+			var id = val.value;
+		
+		    $.ajax({
+		        type: "GET",
+		        url: "/filieres/" + Number(id) +"/etudiants",
+		        success: function(response){
+		            console.log(response);
+		           },
+		        error: function(error){
+		            console.log(error);
+		           }
+		        });
+		}
+  		/** 
+  		url : window.location + "api/filiere/"+id,
+  		*/
+  	  	function ajaxGet(val){
+	  	    var id = val.value;
+  	  		$.ajax({
+	  	      type : "GET",
+	  	      url :  "http://localhost:8080/api/filiere/"+id,
+	  	      success: function(result){
+	  	        if(result.status == "200"){
+	  	        	
+  	        	  $('#listEtudAndNote').empty();
+	  	          var custList = "";
+	  	          $.each(result.data.etudiants, function(i, etudiant){
+	  	            var line = "<tr>"+
+	  	            	"<td>" + etudiant.nom + "</td>" +
+	  	            	"<td> <input type='text' class='form-control' id ='noteEdit' name='note' required>  </td>" +
+	  	                " </tr>";
+	  	            $('#listEtudAndNote').append(line)
+	  	           });
+	  	          console.log("Success: ", result);
+	  	        } else{
+	  	          $("#listEtudAndNote").html("<tr><td><strong>Erreur</strong></td><td></td></tr>");
+	  	          console.log("Fail: ", result);
+	  	        }
+	  	      },
+	  	      error : function(e) {
+	  	    	$("#listEtudAndNote").html("<tr><td><strong>Erreur</strong></td><td></td></tr>");
+	  	        console.log("ERROR: ", e);
+	  	      }
+  	    	}); 
+  	  	}
+  		
+	  	$(document).ready(function () {
+	  		
+	  		/*
+	  		 $("#filiereChoisi").on('change', function(){
+	 	        theme: "bootstrap4",
+	 	        ajax: {
+	 	            url: '/states',
+	 	            dataType: 'json',
+	 	            delay: 250,
+	 	            processResults: function (response) {
+	 	                return {
+	 	                    results: response
+	 	                };
+	 	            },
+	 	            cache: true
+	 	        }
+	 	    });
+	  		 */
+	  	});	  			   
+	</script>
+</body>
+</html>
